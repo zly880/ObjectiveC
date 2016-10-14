@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewFooter" id="U6b-Vx-4bR" customClass="CollectionViewFooter">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="已经到底了" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CgX-gh-Hf3">
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vHQ-5r-UwS">
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="0.5" id="s0J-f6-9fe"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oX2-fg-6ih">
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="0.5" id="00u-Cv-5Ge"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="CgX-gh-Hf3" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="5wv-vQ-CQh"/>
+                <constraint firstItem="vHQ-5r-UwS" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" constant="16" id="6td-if-yzp"/>
+                <constraint firstItem="vHQ-5r-UwS" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="ejV-mn-cXF"/>
+                <constraint firstItem="oX2-fg-6ih" firstAttribute="leading" secondItem="CgX-gh-Hf3" secondAttribute="trailing" constant="16" id="f4J-x8-5fg"/>
+                <constraint firstItem="CgX-gh-Hf3" firstAttribute="leading" secondItem="vHQ-5r-UwS" secondAttribute="trailing" constant="16" id="fAs-h3-zeC"/>
+                <constraint firstItem="oX2-fg-6ih" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="fdl-zO-2Wb"/>
+                <constraint firstItem="CgX-gh-Hf3" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="m45-HC-mZS"/>
+                <constraint firstAttribute="trailing" secondItem="oX2-fg-6ih" secondAttribute="trailing" constant="16" id="uwO-DK-W9a"/>
+            </constraints>
+            <connections>
+                <outlet property="leftView" destination="vHQ-5r-UwS" id="5Tk-ps-lLe"/>
+                <outlet property="rightView" destination="oX2-fg-6ih" id="tZo-Ee-dI7"/>
+                <outlet property="titleLabel" destination="CgX-gh-Hf3" id="60K-tq-0J7"/>
+            </connections>
+        </collectionReusableView>
+    </objects>
+</document>
