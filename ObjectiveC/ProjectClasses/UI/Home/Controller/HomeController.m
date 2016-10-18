@@ -86,7 +86,7 @@
     
     _dataSource = @[@"硬件检测", @"系统应用", @"系统通知", @"字体列表",
                     @"二维码扫描", @"图片", @"WebView", @"地图定位",
-                    @"音频", @"视频", @"支付"];
+                    @"音频", @"视频", @"支付", @"即时通讯"];
     _bannerList = [NSMutableArray array];
 }
 
@@ -305,6 +305,8 @@
         [Toast showMessage:@"敬请期待"];
     } else if ([titleString isEqualToString:@"支付"]) {
         [Toast showMessage:@"敬请期待"];
+    } else if ([titleString isEqualToString:@"即时通讯"]) {
+        [Toast showMessage:@"即时通讯"];
     }
 }
 
