@@ -73,7 +73,7 @@ CGFloat PageControlHeight = 20.0f;
 @property (nonatomic, assign) NSInteger centerIndex;
 @property (nonatomic, assign) NSInteger rightIndex;
 
-@property (nonatomic, assign) id <BannerDelegate> delegate;
+@property (nonatomic, weak  ) id <BannerDelegate> delegate;
 @property (nonatomic, assign) NSUInteger dataSourceCount;
 @property (nonatomic, strong) NSTimer *timer;
 

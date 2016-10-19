@@ -42,8 +42,12 @@
     }
     NSURL *URL = [NSURL URLWithString:urlString];
     if ([[UIApplication sharedApplication] canOpenURL:URL] == YES) {
-        [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
-        }];
+        if (SYSTEM_VERSION.floatValue > 10.0) {
+            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
+            }];
+        } else {
+            [[UIApplication sharedApplication] openURL:URL];
+        }
     } else {
         [Toast showFailed:@"打开Safari失败"];
     }
@@ -62,8 +66,12 @@
     
     NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNumber]];
     if ([[UIApplication sharedApplication] canOpenURL:URL]) {
-        [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
-        }];
+        if (SYSTEM_VERSION.floatValue > 10.0) {
+            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
+            }];
+        } else {
+            [[UIApplication sharedApplication] openURL:URL];
+        }
     } else {
         [Toast showFailed:@"拨打电话失败"];
     }

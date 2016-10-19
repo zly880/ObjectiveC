@@ -86,7 +86,8 @@
     
     _dataSource = @[@"硬件检测", @"系统应用", @"系统通知", @"字体列表",
                     @"二维码扫描", @"图片", @"WebView", @"地图定位",
-                    @"音频", @"视频", @"支付", @"即时通讯"];
+                    @"音频", @"视频", @"支付", @"即时通讯",
+                    @"友盟"];
     _bannerList = [NSMutableArray array];
 }
 
@@ -280,8 +281,10 @@
         [UIAlertController alertFromVC:self title:titleString message:nil buttonTitles:@[@"定位", @"地图", @"取消"] blocks:^(UIAlertAction *action) {
             if ([action.title isEqualToString:@"定位"]) {
                 [[Location shareInstance] locationService:YES fromVc:self];
-                [[Location shareInstance] coordinateFromAddress:@"成都" result:^(CLLocation *location, NSDictionary *addressDictionary) {
-                    [Toast showMessage:[NSString stringWithFormat:@"经度：%f\n纬度：%f", location.coordinate.longitude, location.coordinate.latitude]];
+                [Toast showLoading:@"定位中..."];
+                [[Location shareInstance] setCurrentLocation:^(CLLocation *currentLocation) {
+                    CLLocationCoordinate2D coordinate = currentLocation.coordinate;
+                    [Toast showMessage:[NSString stringWithFormat:@"经度：%f\n纬度：%f", coordinate.longitude, coordinate.latitude]];
                 }];
             } else if ([action.title isEqualToString:@"地图"]) {
                 Map *vc = [[Map alloc] init];
@@ -306,7 +309,10 @@
     } else if ([titleString isEqualToString:@"支付"]) {
         [Toast showMessage:@"敬请期待"];
     } else if ([titleString isEqualToString:@"即时通讯"]) {
-        [Toast showMessage:@"即时通讯"];
+        [Toast showMessage:@"敬请期待"];
+    } else if ([titleString isEqualToString:@"友盟"]) {
+        // TUDO: 统计和分享
+        [Toast showMessage:@"敬请期待友盟统计和分享"];
     }
 }
 

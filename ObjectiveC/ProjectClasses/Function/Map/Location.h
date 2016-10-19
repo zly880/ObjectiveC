@@ -11,7 +11,8 @@
 
 @interface Location : NSObject
 
-@property (nonatomic, strong) CLLocation *currentLocation; // 位置
+@property (nonatomic, strong) CLLocation *location; // 当前内存中的位置
+@property (nonatomic, copy  ) void(^CurrentLocation)(CLLocation *currentLocation); // 当前定位位置
 
 /**
  获取模块单例

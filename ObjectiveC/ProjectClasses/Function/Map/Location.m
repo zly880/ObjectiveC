@@ -52,21 +52,18 @@
         if ([CLLocationManager locationServicesEnabled] == NO) {
             [Toast showFailed:@"定位服务尚未打开，请设置打开！"];
         } else {
-            if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorizedWhenInUse) {
-                [_locationManager requestWhenInUseAuthorization];
-            } else {
-                // 设置代理
-                _locationManager.delegate = self;
-                // 定位频率和定位精度并不应当越精确越好，需要视实际情况而定，因为越精确越耗性能，也就越费电。
-                // 设置定位精度
-                _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-                // 定位频率,十米定位一次
-                _locationManager.distanceFilter = 10.0;
-                // iOS9新特性：将允许出现这种场景：同一app中多个location manager：一些只能在前台定位，另一些可在后台定位（并可随时禁止其后台定位）。
-                _locationManager.allowsBackgroundLocationUpdates = YES;
-                // 开始定位
-                [_locationManager startUpdatingLocation];
-            }
+            [_locationManager requestWhenInUseAuthorization];
+            // 设置代理
+            _locationManager.delegate = self;
+            // 定位频率和定位精度并不应当越精确越好，需要视实际情况而定，因为越精确越耗性能，也就越费电。
+            // 设置定位精度
+            _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+            // 定位频率,十米定位一次
+            _locationManager.distanceFilter = 10.0;
+            // iOS9新特性：将允许出现这种场景：同一app中多个location manager：一些只能在前台定位，另一些可在后台定位（并可随时禁止其后台定位）。
+            _locationManager.allowsBackgroundLocationUpdates = YES;
+            // 开始定位
+            [_locationManager startUpdatingLocation];
         }
     } else {
         [_locationManager stopUpdatingLocation];
@@ -77,8 +74,11 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     
     if (locations.count > 0) {
-        _currentLocation = [locations firstObject];
         [self locationService:NO fromVc:nil];
+        _location = [locations firstObject];
+        if (_CurrentLocation) {
+            _CurrentLocation(_location);
+        }
     }
 }
 
@@ -91,7 +91,7 @@
  */
 - (CGFloat)distance:(CLLocation *)location {
     
-    return [_currentLocation distanceFromLocation:location];
+    return [_location distanceFromLocation:location];
 }
 
 /**
