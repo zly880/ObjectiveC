@@ -131,7 +131,7 @@ CGFloat PageControlHeight = 20.0f;
                 [_pageControl mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.height.equalTo(@(PageControlHeight));
                     make.left.right.equalTo(weakSelf).with.offset(_offset.horizontal);
-                    make.top.bottom.equalTo(weakSelf).with.offset(_offset.vertical);
+                    make.bottom.equalTo(weakSelf).with.offset(_offset.vertical);
                 }];
             }
         } else {
