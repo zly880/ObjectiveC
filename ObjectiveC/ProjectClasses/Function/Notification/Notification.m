@@ -31,64 +31,100 @@
     return instance;
 }
 
+#pragma mark - 本地通知
+
 /**
- 注册通知
+ 注册本地通知
  */
-- (void)registerNotification {
+- (void)registerLocalNotification {
     
-    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay completionHandler:^(BOOL granted, NSError * _Nullable error) {
-        //在block中会传入布尔值granted，表示用户是否同意
-        if (granted) {
-            //如果用户权限申请成功，设置通知中心的代理
-            [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-        }
-    }];
+    if (SYSTEM_VERSION.floatValue >= 10.0) {
+        [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
+                // 请求权限
+                [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                    //在block中会传入布尔值granted，表示用户是否同意
+                    if (granted) {
+                        [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+                    }
+                }];
+            } else {
+                [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+            }
+        }];
+    } else {
+        UIUserNotificationType type = UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge;
+        UIUserNotificationSettings *setting = [UIUserNotificationSettings settingsForTypes:type categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:setting];
+    }
 }
 
 /**
- 显示通知
+ 显示本地通知
  
  @param title     标题
  @param subTitle  子标题
  @param body      内容，注意：没有内容的通知只会在通知栏显示，不会弹alert
- @param imagePath 图片
+ @param imagePath 图片的本地路径，默认只显示一张
  @param userInfo  传输数据
  */
-- (void)showNotificationWithTitle:(NSString *)title
-                         subTitle:(NSString *)subTitle
-                             body:(NSString *)body
-                        imagePath:(NSString *)imagePath
-                         userInfo:(NSDictionary *)userInfo {
+- (void)showLocalNotificationWithTitle:(NSString *)title
+                              subTitle:(NSString *)subTitle
+                                  body:(NSString *)body
+                             imagePath:(NSString *)imagePath
+                              userInfo:(NSDictionary *)userInfo {
     
-    // 通知内容类
-    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-    // 设置通知请求发送时 app图标上显示的数字
-    content.badge = @2;
-    // 默认的通知提示音
-    content.sound = [UNNotificationSound defaultSound];
-    // 设置通知的标题
-    content.title = title;
-    // 设置通知的副标题
-    content.subtitle = subTitle;
-    // 设置通知的内容
-    content.body = body;
-    if (imagePath.length > 0) {
-        //创建图片附件
-        UNNotificationAttachment *attach = [UNNotificationAttachment attachmentWithIdentifier:@"imageAttach" URL:[NSURL fileURLWithPath:imagePath] options:nil error:nil];
-        content.attachments = @[attach];
+    if (SYSTEM_VERSION.floatValue >= 10.0) {
+        // 通知内容类
+        UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+        // 设置通知请求发送时 app图标上显示的数字
+        content.badge = @2;
+        // 默认的通知提示音
+        content.sound = [UNNotificationSound defaultSound];
+        // 设置通知的标题
+        content.title = title;
+        // 设置通知的副标题
+        content.subtitle = subTitle;
+        // 设置通知的内容
+        content.body = body;
+        if (imagePath.length > 0) {
+            //创建图片附件
+            UNNotificationAttachment *attach = [UNNotificationAttachment attachmentWithIdentifier:IMAGE_ATTACH_ID URL:[NSURL fileURLWithPath:imagePath] options:nil error:nil];
+            content.attachments = @[attach];
+        }
+        // 设置通知传递的数据结构
+        content.userInfo = userInfo;
+        // 设置2S之后执行
+        UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:2 repeats:NO];
+        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:SHOW_LOCAL_NOTIFICATION content:content trigger:trigger];
+        //添加通知请求
+        [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+        }];
+    } else {
+        UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:2];
+        localNotification.timeZone = [NSTimeZone defaultTimeZone];
+        localNotification.alertBody = body;
+        localNotification.alertAction = [NSString stringWithFormat:@"进入ObjectiveC"];
+        localNotification.soundName = UILocalNotificationDefaultSoundName;
+        localNotification.userInfo = userInfo;
+        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     }
-    // 设置通知传递的数据结构
-    content.userInfo = userInfo;
-    // 设置5S之后执行
-    UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:NO];
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"NotificationDefault" content:content trigger:trigger];
-    //添加通知请求
-    [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
-        [Toast showMessage:@"添加通知成功！"];
-    }];
 }
 
-#pragma mark - UNUserNotificationCenterDelegate
+#pragma mark - 远程通知
+
+/**
+ 注册远程通知
+ */
+- (void)registerRemoteNotification {
+    
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+}
+
+#pragma mark - <UNUserNotificationCenterDelegate>
 
 // 在展示通知前进行处理，即有机会在展示通知前再修改通知内容。
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -97,7 +133,7 @@
     
     // 1. 处理通知
     // 2. 处理完成后条用 completionHandler ，用于指示在前台显示通知的形式
-    completionHandler(UNAuthorizationOptionBadge | UNAuthorizationOptionAlert | UNAuthorizationOptionSound);
+    completionHandler(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay);
 }
 
 // 接收到本地通知
@@ -105,6 +141,12 @@
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler {
     
+    UNNotificationTrigger *trigger = response.notification.request.trigger;
+    if ([trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        // TUDO: 推送通知
+    } else if ([trigger isKindOfClass:[UNTimeIntervalNotificationTrigger class]]) {
+        // TUDO: 本地通知
+    }
 }
 
 @end

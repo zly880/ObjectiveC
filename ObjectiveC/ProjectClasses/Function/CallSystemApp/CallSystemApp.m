@@ -42,7 +42,7 @@
     }
     NSURL *URL = [NSURL URLWithString:urlString];
     if ([[UIApplication sharedApplication] canOpenURL:URL] == YES) {
-        if (SYSTEM_VERSION.floatValue > 10.0) {
+        if (SYSTEM_VERSION.floatValue >= 10.0) {
             [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
             }];
         } else {
@@ -66,7 +66,7 @@
     
     NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNumber]];
     if ([[UIApplication sharedApplication] canOpenURL:URL]) {
-        if (SYSTEM_VERSION.floatValue > 10.0) {
+        if (SYSTEM_VERSION.floatValue >= 10.0) {
             [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:^(BOOL success) {
             }];
         } else {
