@@ -64,6 +64,7 @@ CGFloat PageControlHeight = 20.0f;
 
 @interface Banner () <UIScrollViewDelegate>
 
+// 视图控件
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, strong) BannerCell *leftView;
@@ -72,10 +73,11 @@ CGFloat PageControlHeight = 20.0f;
 @property (nonatomic, assign) NSInteger leftIndex;
 @property (nonatomic, assign) NSInteger centerIndex;
 @property (nonatomic, assign) NSInteger rightIndex;
-
+// 定时器
+@property (nonatomic, strong) NSTimer *timer;
+// 数据源
 @property (nonatomic, weak  ) id <BannerDelegate> delegate;
 @property (nonatomic, assign) NSUInteger dataSourceCount;
-@property (nonatomic, strong) NSTimer *timer;
 
 @end
 
@@ -190,7 +192,9 @@ CGFloat PageControlHeight = 20.0f;
             [UIGestureRecognizer gestureOnView:_centerView
                                    gestureType:GestureTypeSingleTap
                                         blocks:^(UIGestureRecognizer *gesture) {
-                                            [self gestureHandler:gesture];
+                                            if (_delegate && [_delegate respondsToSelector:@selector(bannerClicked:cellIndex:)]) {
+                                                [_delegate bannerClicked:self cellIndex:_centerIndex];
+                                            }
                                         }];
         }
     }
@@ -220,7 +224,6 @@ CGFloat PageControlHeight = 20.0f;
     _leftView.frame = CGRectMake(0, 0, width, height);
     _centerView.frame = CGRectMake(width, 0, width, height);
     _rightView.frame = CGRectMake(width * 2, 0, width, height);
-    // 避免iOS7上崩溃
     [super layoutSubviews];
 }
 
@@ -251,16 +254,7 @@ CGFloat PageControlHeight = 20.0f;
     }
 }
 
-#pragma mark - 手势操作，只能操作最中间的视图
-
-- (void)gestureHandler:(UIGestureRecognizer *)gesture {
-    
-    if (_delegate && [_delegate respondsToSelector:@selector(bannerClicked:cellIndex:)]) {
-        [_delegate bannerClicked:self cellIndex:_centerIndex];
-    }
-}
-
-#pragma mark - 计时相关
+#pragma mark - 计时相关，避免进入子页面视图滚动误差暂停计时器
 
 - (void)start {
     
@@ -270,6 +264,8 @@ CGFloat PageControlHeight = 20.0f;
                                                 selector:@selector(processTimer:)
                                                 userInfo:nil
                                                  repeats:YES];
+    } else {
+        [_timer setFireDate:[NSDate distantPast]];
     }
 }
 
@@ -288,23 +284,7 @@ CGFloat PageControlHeight = 20.0f;
                                      target:self
                                    selector:@selector(scrollViewDidEndDecelerating:)
                                    userInfo:nil
-                                    repeats:YES];
-}
-
-#pragma mark - 计时相关，避免进入子页面视图滚动误差
-
-- (void)pause {
-    
-    if (_timer != nil) {
-        [_timer setFireDate:[NSDate distantFuture]];
-    }
-}
-
-- (void)goon {
-    
-    if (_timer != nil) {
-        [_timer setFireDate:[NSDate date]];
-    }
+                                    repeats:NO];
 }
 
 #pragma mark - <UIScrollViewDelegate>
