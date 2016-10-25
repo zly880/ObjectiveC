@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageMultipleHeader" id="U6b-Vx-4bR" customClass="ImageMultipleHeader">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="相册名称" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c7i-Ft-V1B">
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="c7i-Ft-V1B" secondAttribute="trailing" constant="16" id="BDL-r2-xey"/>
+                <constraint firstItem="c7i-Ft-V1B" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" constant="16" id="hoA-G7-1I8"/>
+                <constraint firstItem="c7i-Ft-V1B" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" constant="16" id="iS9-2b-Ayj"/>
+                <constraint firstAttribute="bottom" secondItem="c7i-Ft-V1B" secondAttribute="bottom" constant="16" id="q7r-HS-mFt"/>
+            </constraints>
+            <connections>
+                <outlet property="titleLabel" destination="c7i-Ft-V1B" id="LqN-PG-0Y0"/>
+            </connections>
+        </collectionReusableView>
+    </objects>
+</document>

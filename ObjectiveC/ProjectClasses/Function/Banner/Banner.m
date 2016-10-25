@@ -265,7 +265,7 @@ CGFloat PageControlHeight = 20.0f;
                                                 userInfo:nil
                                                  repeats:YES];
     } else {
-        [_timer setFireDate:[NSDate distantPast]];
+        [_timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:_interval]];
     }
 }
 

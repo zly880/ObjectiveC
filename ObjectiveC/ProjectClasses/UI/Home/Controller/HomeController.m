@@ -34,10 +34,14 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [_banner start];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [_banner stop];
 }
 
 - (void)viewDidLoad {
@@ -45,12 +49,12 @@
     // Do any additional setup after loading the view.
     
     self.navigationItem.leftBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:@"Login"
+    [[UIBarButtonItem alloc] initWithTitle:@"登录"
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(leftButtonHandler:)];
     self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:@"Logout"
+    [[UIBarButtonItem alloc] initWithTitle:@"退出"
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(rightButtonHandler:)];
@@ -215,12 +219,11 @@
             }
         }];
     } else if ([titleString isEqualToString:@"系统通知"]) {
-        [[Notification shareInstance] registerNotification];
-        [[Notification shareInstance] showNotificationWithTitle:@"我是标题"
-                                                       subTitle:@"我是子标题"
-                                                           body:@"我是内容"
-                                                      imagePath:[[NSBundle mainBundle] pathForResource:@"1" ofType:@"jpg"]
-                                                       userInfo:nil];
+        [[Notification shareInstance] showLocalNotificationWithTitle:@"我是标题"
+                                                            subTitle:@"我是子标题"
+                                                                body:@"我是内容"
+                                                           imagePath:[[NSBundle mainBundle] pathForResource:@"1" ofType:@"jpg"]
+                                                            userInfo:nil];
     } else if ([titleString isEqualToString:@"字体列表"]) {
         FontList *vc = [[FontList alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
@@ -238,15 +241,7 @@
                 } cancel:^{
                 }];
             } else if ([action.title isEqualToString:@"多选"]) {
-                ImageMultipleController *vc = [[ImageMultipleController alloc] initWithFromVc:self maxCount:9];
-                [vc setImageMultipleResult:^(NSArray *imageMultipleResult) {
-                    [_bannerList removeAllObjects];
-                    [imageMultipleResult enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        ImageItem *item = (ImageItem *)obj;
-                        [_bannerList addObject:item.image];
-                    }];
-                    [_banner reloadData];
-                }];
+                ImageMultipleController *vc = [[ImageMultipleController alloc] init];
                 [self.navigationController pushViewController:vc animated:YES];
             } else if ([action.title isEqualToString:@"预览"]) {
                 if (_bannerList.count > 0) {

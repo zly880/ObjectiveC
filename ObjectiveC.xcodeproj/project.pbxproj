@@ -61,6 +61,8 @@
 		718D36F51D9E687300A4298D /* FontList.m in Sources */ = {isa = PBXBuildFile; fileRef = 718D36F41D9E687300A4298D /* FontList.m */; };
 		718D36F81D9E6B1500A4298D /* CallSystemApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 718D36F71D9E6B1500A4298D /* CallSystemApp.m */; };
 		71ADE3391DA8EA5E00EF370A /* Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 71ADE3381DA8EA5E00EF370A /* Hardware.m */; };
+		71E8DF5D1DB7725D0099A80F /* ImageMultipleHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E8DF5B1DB7725D0099A80F /* ImageMultipleHeader.m */; };
+		71E8DF5E1DB7725D0099A80F /* ImageMultipleHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 71E8DF5C1DB7725D0099A80F /* ImageMultipleHeader.xib */; };
 		71EA5C881DAA3E0700354048 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71EA5C871DAA3E0700354048 /* WebViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -169,6 +171,9 @@
 		718D36F71D9E6B1500A4298D /* CallSystemApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallSystemApp.m; sourceTree = "<group>"; };
 		71ADE3371DA8EA5E00EF370A /* Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hardware.h; sourceTree = "<group>"; };
 		71ADE3381DA8EA5E00EF370A /* Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hardware.m; sourceTree = "<group>"; };
+		71E8DF5A1DB7725D0099A80F /* ImageMultipleHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageMultipleHeader.h; sourceTree = "<group>"; };
+		71E8DF5B1DB7725D0099A80F /* ImageMultipleHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageMultipleHeader.m; sourceTree = "<group>"; };
+		71E8DF5C1DB7725D0099A80F /* ImageMultipleHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageMultipleHeader.xib; sourceTree = "<group>"; };
 		71EA5C861DAA3E0700354048 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
 		71EA5C871DAA3E0700354048 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		A1824B39C3A136DC92551BBC /* Pods-ObjectiveC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectiveC.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectiveC/Pods-ObjectiveC.release.xcconfig"; sourceTree = "<group>"; };
@@ -522,6 +527,9 @@
 				718D36E81D9E56BC00A4298D /* ImageMultipleCell.h */,
 				718D36E91D9E56BC00A4298D /* ImageMultipleCell.m */,
 				718D36EA1D9E56BC00A4298D /* ImageMultipleCell.xib */,
+				71E8DF5A1DB7725D0099A80F /* ImageMultipleHeader.h */,
+				71E8DF5B1DB7725D0099A80F /* ImageMultipleHeader.m */,
+				71E8DF5C1DB7725D0099A80F /* ImageMultipleHeader.xib */,
 				718D36ED1D9E5CE900A4298D /* ImagePreViewController.h */,
 				718D36EE1D9E5CE900A4298D /* ImagePreViewController.m */,
 			);
@@ -667,6 +675,7 @@
 			files = (
 				7154D6F21DAF71780002F683 /* 1.jpg in Resources */,
 				718D36871D9E0AE100A4298D /* 音效.caf in Resources */,
+				71E8DF5E1DB7725D0099A80F /* ImageMultipleHeader.xib in Resources */,
 				718D36A11D9E0F5100A4298D /* CollectionViewHeader.xib in Resources */,
 				718D369C1D9E0E0B00A4298D /* CollectionViewCell.xib in Resources */,
 				7154D6F61DAF71860002F683 /* 3.jpg in Resources */,
@@ -754,6 +763,7 @@
 				718D369B1D9E0E0B00A4298D /* CollectionViewCell.m in Sources */,
 				718D36E71D9E566100A4298D /* ImageMultipleController.m in Sources */,
 				71526ABB1DA94F98007546C6 /* StarRating.m in Sources */,
+				71E8DF5D1DB7725D0099A80F /* ImageMultipleHeader.m in Sources */,
 				718D367B1D9E06BF00A4298D /* BaseController.m in Sources */,
 				718D36E11D9E4B5C00A4298D /* ImageItem.m in Sources */,
 				718D36521D9DFB1200A4298D /* AppDelegate.m in Sources */,
@@ -883,7 +893,7 @@
 				DEVELOPMENT_TEAM = UW6UFH29K8;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ObjectiveC/PrefixHeader.pch";
 				INFOPLIST_FILE = ObjectiveC/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.CLee.www.ObjectiveC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -899,7 +909,7 @@
 				DEVELOPMENT_TEAM = UW6UFH29K8;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ObjectiveC/PrefixHeader.pch";
 				INFOPLIST_FILE = ObjectiveC/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.CLee.www.ObjectiveC;
 				PRODUCT_NAME = "$(TARGET_NAME)";

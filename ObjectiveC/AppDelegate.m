@@ -25,6 +25,11 @@
     NavController *rootNav = [[NavController alloc] initWithRootViewController:root];
     self.window.rootViewController = rootNav;
     [self.window makeKeyAndVisible];
+    // 注册通知
+    [[Notification shareInstance] registerRemoteNotification];
+    [[Notification shareInstance] registerLocalNotification];
+    // 请求定位
+    [[Location shareInstance] locationService:YES fromVc:self];
     
     return YES;
 }

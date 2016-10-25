@@ -38,7 +38,7 @@
 - (void)reloadData;                                 // 根据数据刷新显示
 - (void)dismiss;                                    // 释放其控制器页面之前必须调用
 
-#pragma mark - 计时相关，避免进入子页面视图滚动误差暂停计时器
+#pragma mark - 计时相关，避免进入子页面视图滚动误差，页面显示的时候开始计时，页面消失的时候停止计时
 - (void)start;                                      // 开始计时
 - (void)stop;                                       // 停止计时
 
