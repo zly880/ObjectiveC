@@ -8,23 +8,45 @@
 
 #import "ImageMultipleController.h"
 #import "ImageMultipleCell.h"
-#import "ImageMultipleHeader.h"
 #import <Photos/Photos.h>
 
 @interface ImageMultipleController () <UICollectionViewDataSource, UICollectionViewDelegate>
 
+@property (nonatomic, assign) UIViewController *fromVc;         // 来源控制器
+@property (nonatomic, assign) NSInteger maxCount;               // 最多允许选择多少张图片
 @property (nonatomic, strong) UICollectionView *collectionView; // 图片显示视图
-@property (nonatomic, strong) NSMutableArray *allAlbums;        // 所有相册
-@property (nonatomic, strong) NSMutableDictionary *allImages;   // 所有图片
+@property (nonatomic, strong) NSMutableArray *dataSource;       // 所有图片数据
+@property (nonatomic, strong) NSMutableArray *selectItems;      // 选中的图片数据
 
 @end
 
 @implementation ImageMultipleController
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+/**
+ 初始化
+ 
+ @param fromVc   来源控制器
+ @param maxCount 最多允许选择多少张图片
+ 
+ @return 实例对象
+ */
+- (instancetype)initWithFromVc:(UIViewController *)fromVc
+                      maxCount:(NSUInteger)maxCount {
     
-    [_collectionView reloadData];
+    self = [super init];
+    
+    if (self) {
+        _fromVc = fromVc;
+        _maxCount = maxCount;
+    }
+    
+    return self;
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self customData];
+    [self customUI];
 }
 
 - (void)viewDidLoad {
@@ -37,14 +59,6 @@
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(completeButtonHandler:)];
-    
-    // 初始化数据
-    _allAlbums = [[NSMutableArray alloc] init];
-    _allImages = [[NSMutableDictionary alloc] init];
-    // 初始化UI
-    [self customUI];
-    // 获取所有图片的缩略图
-    [self getAllImages:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,91 +66,35 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Data
-
-/**
- 获取所有图片
- 
- @param original YES 表示原图，NO 表示缩略图
- */
-- (void)getAllImages:(BOOL)original {
+- (void)customData {
     
-    [_allAlbums removeAllObjects];
-    // 获得所有的自定义相簿
-    PHFetchResult<PHAssetCollection *> *assetCollections = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
-    for (PHAssetCollection *assetCollection in assetCollections) {
-        [_allAlbums addObject:assetCollection];
-        [self enumAssetCollection:assetCollection original:original];
-    }
-    // 获得相机胶卷
-    PHAssetCollection *cameraRoll = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary options:nil].lastObject;
-    [_allAlbums addObject:cameraRoll];
-    [self enumAssetCollection:cameraRoll original:original];
-    // 获得屏幕截图
-    PHAssetCollection *shots = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeSmartAlbumScreenshots options:nil].lastObject;
-    [_allAlbums addObject:shots];
-    [self enumAssetCollection:shots original:original];
-}
-
-/**
- 遍历相簿中的图片
- 
- @param assetCollection 相簿
- @param original        是否要原图
- */
-- (void)enumAssetCollection:(PHAssetCollection *)assetCollection
-                   original:(BOOL)original {
+    _dataSource = [NSMutableArray array];
+    _selectItems = [NSMutableArray array];
     
-    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
-    // 同步获得图片
-    options.synchronous = YES;
-    // 获得某个相簿中的所有PHAsset对象
-    PHFetchResult<PHAsset *> *assets = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
-    for (PHAsset *asset in assets) {
-        // 是否要原图
-        CGSize size = CGSizeZero;
-        if (original == YES) {
-            size = CGSizeMake(asset.pixelWidth, asset.pixelHeight);
-        } else {
-            size = CGSizeMake(asset.pixelWidth / 2, asset.pixelHeight / 2);
-        }
-        // 从asset中获得图片
-        [[PHImageManager defaultManager] requestImageForAsset:asset
-                                                   targetSize:size
-                                                  contentMode:PHImageContentModeDefault
-                                                      options:options
-                                                resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                                                    [self saveImages:result info:info assetCollection:assetCollection];
-                                                }];
+    PHFetchOptions *options = [[PHFetchOptions alloc] init];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+    PHFetchResult *asserts = [PHAsset fetchAssetsWithOptions:options];
+    for (NSInteger i = 0; i < asserts.count; i++) {
+        ImageItem *imageItem = [[ImageItem alloc] init];
+        [_dataSource addObject:imageItem];
+        PHAsset *assert = (PHAsset *)asserts[i];
+        [[PHImageManager defaultManager] requestImageForAsset:assert targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:PHImageRequestOptionsResizeModeNone resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+            NSInteger index = [asserts indexOfObject:assert];
+            ImageItem *imageItemNew = [[ImageItem alloc] init];
+            imageItemNew.image = result;
+            imageItemNew.info = info;
+            [_dataSource replaceObjectAtIndex:index withObject:imageItemNew];
+            [_collectionView reloadData];
+        }];
     }
 }
-
-/**
- 保存图片
- 
- @param result          图片
- @param info            图片信息
- @param assetCollection 相册
- */
-- (void)saveImages:(UIImage *)result info:(NSDictionary *)info assetCollection:(PHAssetCollection *)assetCollection {
-    
-    ImageItem *item = [[ImageItem alloc] init];
-    item.image = result;
-    item.info = info;
-    NSMutableArray *array = [NSMutableArray arrayWithArray:_allImages[assetCollection.localizedTitle]];
-    [array addObject:item];
-    [_allImages removeObjectForKey:assetCollection.localizedTitle];
-    [_allImages setObject:array forKey:assetCollection.localizedTitle];
-}
-
-#pragma mark - UI
 
 - (void)customUI {
     
     UICollectionViewFlowLayout *usualLayout = [[UICollectionViewFlowLayout alloc] init];
     usualLayout.minimumLineSpacing = 1;
     usualLayout.minimumInteritemSpacing = 1;
-    usualLayout.sectionInset = UIEdgeInsetsZero;
+    usualLayout.sectionInset = UIEdgeInsetsMake(10, 0, 10, 0);
     usualLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
     self.collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:usualLayout];
     self.collectionView.backgroundColor = APPCOLOR_WHITE;
@@ -146,9 +104,6 @@
     self.collectionView.showsHorizontalScrollIndicator = NO;
     [self.collectionView registerNib:[UINib nibWithNibName:@"ImageMultipleCell" bundle:nil]
           forCellWithReuseIdentifier:@"ImageMultipleCell"];
-    [self.collectionView registerNib:[UINib nibWithNibName:@"ImageMultipleHeader" bundle:nil]
-          forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                 withReuseIdentifier:@"ImageMultipleHeader"];
     [self.view addSubview:self.collectionView];
 }
 
@@ -157,34 +112,25 @@
 - (void)completeButtonHandler:(UIBarButtonItem *)item {
     
     [self.navigationController popViewControllerAnimated:YES];
+    if (_ImageMultipleResult != nil) {
+        _ImageMultipleResult(_selectItems);
+    }
 }
 
 #pragma  mark - <UICollectionViewDataSource, UICollectionViewDelegate>
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    
-    return _allAlbums.count;
-}
-
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     
-    PHAssetCollection *assetCollection = _allAlbums[section];
-    NSMutableArray *images = [_allImages objectForKey:assetCollection.localizedTitle];
-    
-    return images.count;
+    return _dataSource.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     ImageMultipleCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageMultipleCell" forIndexPath:indexPath];
-    if (indexPath.section < _allAlbums.count) {
-        PHAssetCollection *assetCollection = _allAlbums[indexPath.section];
-        NSMutableArray *images = [_allImages objectForKey:assetCollection.localizedTitle];
-        if (indexPath.row < images.count) {
-            ImageItem *item = images[indexPath.row];
-            cell.imageView.image = item.image;
-            cell.selectImage.hidden = !item.select;
-        }
+    if (indexPath.row < _dataSource.count) {
+        ImageItem *imageItem = _dataSource[indexPath.row];
+        cell.imageView.image = imageItem.image;
+        cell.selectImage.hidden = !imageItem.select;
     }
     
     return cell;
@@ -202,23 +148,34 @@
     return  CGSizeMake(width, width);
 }
 
-- (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    return CGSizeMake(CGRectGetWidth(collectionView.bounds), 44);
-}
-
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    
-    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        ImageMultipleHeader *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ImageMultipleHeader" forIndexPath:indexPath];
-        if (indexPath.section < _allAlbums.count) {
-            PHAssetCollection *assetCollection = _allAlbums[indexPath.section];
-            header.titleLabel.text = assetCollection.localizedTitle;;
-        }
-        return header;
-    } else {
-        return nil;
+    ImageItem *imagItem = _dataSource[indexPath.row];
+    if (imagItem.image == nil) {
+        return;
     }
+    if ([_selectItems containsObject:imagItem] == YES) {
+        [_selectItems removeObject:imagItem];
+        imagItem.select = NO;
+    } else {
+        if (_selectItems.count >= self.maxCount) {
+            return;
+        } else {
+            imagItem.select = YES;
+            [_selectItems addObject:imagItem];
+        }
+    }
+    [_dataSource replaceObjectAtIndex:indexPath.row withObject:imagItem];
+    
+    NSString *titleString = @"";
+    if (_dataSource.count <= self.maxCount) {
+        titleString = [NSString stringWithFormat:@"%lu/%ld", (unsigned long)_selectItems.count, (long)_dataSource.count];
+    } else {
+        titleString = [NSString stringWithFormat:@"%lu/%ld", (unsigned long)_selectItems.count, (long)self.maxCount];
+    }
+    self.navigationItem.title = titleString;
+    
+    [collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }
 
 @end

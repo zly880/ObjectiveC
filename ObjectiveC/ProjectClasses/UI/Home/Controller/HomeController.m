@@ -165,20 +165,23 @@
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         CollectionViewHeader *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionViewHeader" forIndexPath:indexPath];
         header.backgroundColor = APPCOLOR_WHITE;
-        
         // 轮播广告
         _banner = [[Banner alloc] init:self];
         _banner.frame = CGRectMake(0, 0, CGRectGetWidth(header.bounds), HEADER_HEIGHT);
         [header addSubview:_banner];
         // 五星评价
-        CGRect frame = CGRectMake(0, HEADER_HEIGHT + 10, 105, 21);
-        StarRating *view1 = [[StarRating alloc] initWithFrame:frame originScore:1 isEdit:YES result:^(CGFloat score) {
-            [Toast showMessage:[NSString stringWithFormat:@"%.2f", score]];
-        }];
+        StarRating *view1 = [[StarRating alloc] initWithFrame:CGRectMake(0, HEADER_HEIGHT + 10, 105, 21)
+                                                  originScore:1
+                                                       isEdit:YES
+                                                       result:^(CGFloat score) {
+                                                           [Toast showMessage:[NSString stringWithFormat:@"%.2f", score]];
+                                                       }];
         [header addSubview:view1];
         // 五星显示
-        frame = CGRectMake(SCREEN_WIDTH - 105, HEADER_HEIGHT + 10, 105, 21);
-        StarRating *view2 = [[StarRating alloc] initWithFrame:frame originScore:0.3 isEdit:NO result:nil];
+        StarRating *view2 = [[StarRating alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 105, HEADER_HEIGHT + 10, 105, 21)
+                                                  originScore:0.3
+                                                       isEdit:NO
+                                                       result:nil];
         [header addSubview:view2];
         
         return header;
