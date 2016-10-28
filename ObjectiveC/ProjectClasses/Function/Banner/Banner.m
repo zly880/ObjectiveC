@@ -141,9 +141,7 @@ CGFloat PageControlHeight = 20.0f;
         [self updateShowWithCell];
         // 开始计时
         [self stop];
-        if (_dataSourceCount > 1) {
-            [self start];
-        }
+        [self start];
     }
 }
 
@@ -258,14 +256,16 @@ CGFloat PageControlHeight = 20.0f;
 
 - (void)start {
     
-    if (_timer == nil) {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:_interval
-                                                  target:self
-                                                selector:@selector(processTimer:)
-                                                userInfo:nil
-                                                 repeats:YES];
-    } else {
-        [_timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:_interval]];
+    if (_dataSourceCount > 1) {
+        if (_timer == nil) {
+            _timer = [NSTimer scheduledTimerWithTimeInterval:_interval
+                                                      target:self
+                                                    selector:@selector(processTimer:)
+                                                    userInfo:nil
+                                                     repeats:YES];
+        } else {
+            [_timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:_interval]];
+        }
     }
 }
 
